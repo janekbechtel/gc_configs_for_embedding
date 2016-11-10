@@ -1,10 +1,10 @@
 import os,stat
 
 class finale_state():
-  def __init__(self, name, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], year = "Run2016" ):
+  def __init__(self, name, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_18" ):
     self.name = name
     self.runs = runs
-    self.year = year
+    self.inputfolder = inputfolder
     self.generator_base = 'generator.py'
     self.files_to_copy = ['lheprodandcleaning.py','generator.py','merging.py','grid_control_fullembedding_data_base.conf']
     if not os.path.exists(self.name):
@@ -17,9 +17,9 @@ class finale_state():
         if os.path.exists(self.name+'/'+file_to_copy):
 	  continue
 	if file_to_copy == 'generator.py':
-	  self.copy_file(file_to_copy, add_fragment_to_end=generator_frag, copy_from_folder = self.year)
+	  self.copy_file(file_to_copy, add_fragment_to_end=generator_frag, copy_from_folder = self.inputfolder)
 	elif file_to_copy in ['lheprodandcleaning.py','merging.py']:
-	  self.copy_file(file_to_copy, copy_from_folder = self.year)
+	  self.copy_file(file_to_copy, copy_from_folder = self.inputfolder)
 	elif file_to_copy.endswith('.dbs'):
 	  self.copy_file(file_to_copy, copy_from_folder = 'dbs')
 	else:
@@ -62,7 +62,7 @@ class finale_state():
 
 to_process = []
 
-to_process.append(finale_state(name='MuTau_run2015_v1', runs=["Run2015D"], year="Run2015" ,generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))' ))
+to_process.append(finale_state(name='MuTau_run2015_v1', runs=["Run2015D"], inputfolder="Run2015_CMSSW_7_6_5_p1" ,generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))' ))
 #to_process.append(finale_state(name='ElTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElHadCut = cms.untracked.string("El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4 "))' ))
 #to_process.append(finale_state(name='ElMu_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElMuCut = cms.untracked.string("(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)"))' ))
 #to_process.append(finale_state(name='TauTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(HadHadCut = cms.untracked.string("Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2"))' ))
