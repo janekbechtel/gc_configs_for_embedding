@@ -9,9 +9,9 @@ export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-cmsrel CMSSW_8_0_20
+cmsrel CMSSW_8_0_21
 
-cd CMSSW_8_0_20/src
+cd CMSSW_8_0_21/src
 
 cmsenv
 
