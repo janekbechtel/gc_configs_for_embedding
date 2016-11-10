@@ -13,6 +13,8 @@ cmsrel CMSSW_8_0_20
 
 cd CMSSW_8_0_20/src
 
+cmsenv
+
 git cms-merge-topic swayand:fixingforembedding_cmss80x
 
 scramv1 b -j12
