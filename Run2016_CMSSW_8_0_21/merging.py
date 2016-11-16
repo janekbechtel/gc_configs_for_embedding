@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --era Run2_2016 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect --filein /store/data/Run2016B/DoubleMuon/RAW/v2/000/274/198/00000/4A7B3B0C-5326-E611-8E1A-02163E0141C0.root --fileout RAWskimmed.root -n 60 --no_exec --python_filename=selection.py
+# with command line options: PAT -s PAT --filein file:simulated_and_cleaned.root --fileout file:merged.root --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_Prompt_v8 --eventcontent MINIAODSIM --datatier MINIAODSIM --customise TauAnalysis/EmbeddingProducer/customisers.customisoptions,Configuration/DataProcessing/RecoTLR.customiseDataRun2Common_25ns,TauAnalysis/EmbeddingProducer/customisers.customiseMerging --customise_commands process.patTrigger.processName = cms.string('SIMembedding') -n -1 --no_exec --python_filename=merging.py
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.StandardSequences.Eras import eras
+process = cms.Process('PAT')
 
-process = cms.Process('RECO',eras.Run2_2016)
+####### @FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -16,22 +16,25 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
-process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
-process.load('Configuration.StandardSequences.L1Reco_cff')
-process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('PhysicsTools.PatAlgos.slimming.metFilterPaths_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(60)
+    input = cms.untracked.int32(-1)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('/store/data/Run2016B/DoubleMuon/RAW/v2/000/274/198/00000/4A7B3B0C-5326-E611-8E1A-02163E0141C0.root'),
+    fileNames = cms.untracked.vstring('file:simulated_and_cleaned.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
+
+
+from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
+randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
+randSvc.populate()
+
 
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True)
@@ -39,36 +42,25 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('RECO nevts:60'),
+    annotation = cms.untracked.string('PAT nevts:-1'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
 
 # Output definition
 
-process.RAWRECOoutput = cms.OutputModule("PoolOutputModule",
-    dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('RAWRECO'),
-        filterName = cms.untracked.string('')
-    ),
-    eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('RAWskimmed.root'),
-    outputCommands = process.RAWRECOEventContent.outputCommands,
-    splitLevel = cms.untracked.int32(0)
-)
-
-process.MINIAODoutput = cms.OutputModule("PoolOutputModule",
+process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
     compressionAlgorithm = cms.untracked.string('LZMA'),
     compressionLevel = cms.untracked.int32(4),
     dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('MINIAOD'),
+        dataTier = cms.untracked.string('USER'),
         filterName = cms.untracked.string('')
     ),
     dropMetaData = cms.untracked.string('ALL'),
     eventAutoFlushCompressedSize = cms.untracked.int32(15728640),
     fastCloning = cms.untracked.bool(False),
-    fileName = cms.untracked.string('RAWskimmed_inMINIAOD.root'),
-    outputCommands = process.MINIAODEventContent.outputCommands,
+    fileName = cms.untracked.string('file:merged.root'),
+    outputCommands = process.MINIAODSIMEventContent.outputCommands,
     overrideInputFileSplitLevels = cms.untracked.bool(True)
 )
 
@@ -76,12 +68,9 @@ process.MINIAODoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v4', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v8', '')
 
 # Path and EndPath definitions
-process.raw2digi_step = cms.Path(process.RawToDigi)
-process.L1Reco_step = cms.Path(process.L1Reco)
-process.reconstruction_step = cms.Path(process.reconstruction)
 process.Flag_trackingFailureFilter = cms.Path(process.goodVertices+process.trackingFailureFilter)
 process.Flag_goodVertices = cms.Path(process.primaryVertexFilter)
 process.Flag_CSCTightHaloFilter = cms.Path(process.CSCTightHaloFilter)
@@ -105,34 +94,27 @@ process.Flag_HcalStripHaloFilter = cms.Path(process.HcalStripHaloFilter)
 process.Flag_muonBadTrackFilter = cms.Path(process.muonBadTrackFilter)
 process.Flag_CSCTightHalo2015Filter = cms.Path(process.CSCTightHalo2015Filter)
 process.endjob_step = cms.EndPath(process.endOfProcess)
-process.RAWRECOoutput_step = cms.EndPath(process.RAWRECOoutput)
-process.MINIAODoutput_step = cms.EndPath(process.MINIAODoutput)
+process.MINIAODSIMoutput_step = cms.EndPath(process.MINIAODSIMoutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.raw2digi_step,process.L1Reco_step,process.reconstruction_step,process.Flag_HBHENoiseFilter,process.Flag_HBHENoiseIsoFilter,process.Flag_CSCTightHaloFilter,process.Flag_CSCTightHaloTrkMuUnvetoFilter,process.Flag_CSCTightHalo2015Filter,process.Flag_globalTightHalo2016Filter,process.Flag_globalSuperTightHalo2016Filter,process.Flag_HcalStripHaloFilter,process.Flag_hcalLaserEventFilter,process.Flag_EcalDeadCellTriggerPrimitiveFilter,process.Flag_EcalDeadCellBoundaryEnergyFilter,process.Flag_goodVertices,process.Flag_eeBadScFilter,process.Flag_ecalLaserCorrFilter,process.Flag_trkPOGFilters,process.Flag_chargedHadronTrackResolutionFilter,process.Flag_muonBadTrackFilter,process.Flag_trkPOG_manystripclus53X,process.Flag_trkPOG_toomanystripclus53X,process.Flag_trkPOG_logErrorTooManyClusters,process.Flag_METFilters,process.endjob_step,process.RAWRECOoutput_step,process.MINIAODoutput_step)
+process.schedule = cms.Schedule(process.Flag_HBHENoiseFilter,process.Flag_HBHENoiseIsoFilter,process.Flag_CSCTightHaloFilter,process.Flag_CSCTightHaloTrkMuUnvetoFilter,process.Flag_CSCTightHalo2015Filter,process.Flag_globalTightHalo2016Filter,process.Flag_globalSuperTightHalo2016Filter,process.Flag_HcalStripHaloFilter,process.Flag_hcalLaserEventFilter,process.Flag_EcalDeadCellTriggerPrimitiveFilter,process.Flag_EcalDeadCellBoundaryEnergyFilter,process.Flag_goodVertices,process.Flag_eeBadScFilter,process.Flag_ecalLaserCorrFilter,process.Flag_trkPOGFilters,process.Flag_chargedHadronTrackResolutionFilter,process.Flag_muonBadTrackFilter,process.Flag_trkPOG_manystripclus53X,process.Flag_trkPOG_toomanystripclus53X,process.Flag_trkPOG_logErrorTooManyClusters,process.Flag_METFilters,process.endjob_step,process.MINIAODSIMoutput_step)
 
 # customisation of the process.
 
-# Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
-from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2016 
+# Automatic addition of the customisation function from TauAnalysis.EmbeddingProducer.customisers
+from TauAnalysis.EmbeddingProducer.customisers import customisoptions,customiseMerging 
 
-#call to customisation function customisePostEra_Run2_2016 imported from Configuration.DataProcessing.RecoTLR
-process = customisePostEra_Run2_2016(process)
-
-# Automatic addition of the customisation function from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
-from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet import customizeHitRecoveryInGluedDetOn 
-
-#call to customisation function customizeHitRecoveryInGluedDetOn imported from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
-process = customizeHitRecoveryInGluedDetOn(process)
-
-# Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseSelecting_Reselect 
-
-#call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
+#call to customisation function customisoptions imported from TauAnalysis.EmbeddingProducer.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseSelecting_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseSelecting_Reselect(process)
+#call to customisation function customiseMerging imported from TauAnalysis.EmbeddingProducer.customisers
+process = customiseMerging(process)
+
+# Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
+from Configuration.DataProcessing.RecoTLR import customiseDataRun2Common_25ns 
+
+#call to customisation function customiseDataRun2Common_25ns imported from Configuration.DataProcessing.RecoTLR
+process = customiseDataRun2Common_25ns(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)
@@ -151,3 +133,6 @@ from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllDat
 process = miniAOD_customizeAllData(process)
 
 # End of customisation functions
+
+# Customisation from command line
+process.patTrigger.processName = cms.string('SIMembedding')
