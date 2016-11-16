@@ -6,7 +6,7 @@
 
 cmsDriver.py RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled \
 --data --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 \
---era Run2_2016 \
+--era Run2_2016 --runUnscheduled \
 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD \
 --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,\
 RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,\
@@ -20,13 +20,13 @@ TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect \
 # Tau-Embedding preparation
 
 cmsDriver.py LHEprodandCLEAN --filein file:RAWskimmed.root \
---fileout file:lhe_and_cleaned.root --runUnscheduled --data \
+--fileout file:lhe_and_cleaned.root --runUnscheduled --data --era Run2_2016\
 --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --eventcontent RAWRECO,MINIAOD \
 --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT \
 --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,\
 RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,\
 TauAnalysis/MCEmbeddingTools/customisers.customisoptions,\
-TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning \
+TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning_Reselect \
 --no_exec -n -1 --python_filename lheprodandcleaning.py
 
 # Muon-Embedding preparation
@@ -46,7 +46,7 @@ TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning \
 
 cmsDriver.py TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py \
 --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root \
---conditions 80X_mcRun2_asymptotic_2016_miniAODv2_v1 --era Run2_2016 \
+--conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --era Run2_2016 \
 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:25ns10e33_v2,RAW2DIGI,RECO \
 --datatier RAWRECO,AODSIM --customise \
 TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator,\
