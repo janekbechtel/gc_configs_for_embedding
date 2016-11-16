@@ -2,89 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: LHEprodandCLEAN --filein file:RAWskimmed.root --fileout file:lhe_and_cleaned.root --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_Prompt_v8 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT --customise Configuration/DataProcessing/RecoTLR.customiseDataRun2Common_25ns,TauAnalysis/EmbeddingProducer/customisers.customisoptions,TauAnalysis/EmbeddingProducer/customisers.customiseLHEandCleaning --no_exec -n -1 --python_filename lheprodandcleaning.py
+# with command line options: LHEprodandCLEAN --filein file:RAWskimmed.root --fileout file:lhe_and_cleaned.root --runUnscheduled --data --era Run2_2016 --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning_Reselect -n -1 --python_filename lheprodandcleaning.py
 import FWCore.ParameterSet.Config as cms
 
+from Configuration.StandardSequences.Eras import eras
 
-
-def customise_for_gc(process):
-	import FWCore.ParameterSet.Config as cms
-	from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
-
-	try:
-		maxevents = int(__MAX_EVENTS__)
-		process.maxEvents = cms.untracked.PSet(
-			input = cms.untracked.int32(max(-1, maxevents))
-		)
-	except Exception:
-		pass
-
-	# Dataset related setup
-	try:
-		primaryFiles = [__FILE_NAMES__]
-		process.source = cms.Source('PoolSource',
-			skipEvents = cms.untracked.uint32(__SKIP_EVENTS__),
-			fileNames = cms.untracked.vstring(primaryFiles)
-		)
-		try:
-			secondaryFiles = [__FILE_NAMES2__]
-			process.source.secondaryFileNames = cms.untracked.vstring(secondaryFiles)
-		except Exception:
-			pass
-		try:
-			lumirange = [__LUMI_RANGE__]
-			if len(lumirange) > 0:
-				process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange(lumirange)
-				process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
-		except Exception:
-			pass
-	except Exception:
-		pass
-
-	if hasattr(process, 'RandomNumberGeneratorService'):
-		randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
-		randSvc.populate()
-
-	process.AdaptorConfig = cms.Service('AdaptorConfig',
-		enable = cms.untracked.bool(True),
-		stats = cms.untracked.bool(True),
-	)
-
-	# Generator related setup
-	try:
-		if hasattr(process, 'generator') and process.source.type_() != 'PoolSource':
-			process.source.firstLuminosityBlock = cms.untracked.uint32(1 + __GC_JOB_ID__)
-			print('Generator random seed: %s' % process.RandomNumberGeneratorService.generator.initialSeed)
-	except Exception:
-		pass
-
-	# Print GlobalTag for DBS3 registration - output is taken from edmConfigHash
-	try:
-		print('globaltag:%s' % process.GlobalTag.globaltag.value())
-	except Exception:
-		pass
-	return (process)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-process = cms.Process('RECO')
+process = cms.Process('RECO',eras.Run2_2016)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -105,10 +28,9 @@ process.maxEvents = cms.untracked.PSet(
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('@FILE_NAMES@'),
+    fileNames = cms.untracked.vstring('file:RAWskimmed.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
-
 
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True)
@@ -153,7 +75,7 @@ process.MINIAODoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v8', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v4', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
@@ -190,19 +112,25 @@ process.schedule = cms.Schedule(process.raw2digi_step,process.reconstruction_ste
 # customisation of the process.
 
 # Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
-from Configuration.DataProcessing.RecoTLR import customiseDataRun2Common_25ns 
+from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2016 
 
-#call to customisation function customiseDataRun2Common_25ns imported from Configuration.DataProcessing.RecoTLR
-process = customiseDataRun2Common_25ns(process)
+#call to customisation function customisePostEra_Run2_2016 imported from Configuration.DataProcessing.RecoTLR
+process = customisePostEra_Run2_2016(process)
 
-# Automatic addition of the customisation function from TauAnalysis.EmbeddingProducer.customisers
-from TauAnalysis.EmbeddingProducer.customisers import customisoptions,customiseLHEandCleaning 
+# Automatic addition of the customisation function from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
+from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet import customizeHitRecoveryInGluedDetOn 
 
-#call to customisation function customisoptions imported from TauAnalysis.EmbeddingProducer.customisers
+#call to customisation function customizeHitRecoveryInGluedDetOn imported from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
+process = customizeHitRecoveryInGluedDetOn(process)
+
+# Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseLHEandCleaning_Reselect 
+
+#call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseLHEandCleaning imported from TauAnalysis.EmbeddingProducer.customisers
-process = customiseLHEandCleaning(process)
+#call to customisation function customiseLHEandCleaning_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseLHEandCleaning_Reselect(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)
@@ -220,5 +148,4 @@ from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllDat
 #call to customisation function miniAOD_customizeAllData imported from PhysicsTools.PatAlgos.slimming.miniAOD_tools
 process = miniAOD_customizeAllData(process)
 
-process = customise_for_gc(process)
 # End of customisation functions

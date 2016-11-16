@@ -2,14 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: TauAnalysis/EmbeddingProducer/python/EmbeddingPythia8Hadronizer_cfi.py --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root --conditions 80X_mcRun2_asymptotic_2016_miniAODv2_v1 --era Run2_2016 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:25ns10e33_v2,RAW2DIGI,RECO --datatier RAWRECO,AODSIM --customise TauAnalysis/EmbeddingProducer/customisers.customiseGenerator,TauAnalysis/EmbeddingProducer/customisers.customisoptions --customise_commands process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string('Mu.Pt > 18 && Had.Pt > 25 && Mu.Eta < 2.1')) --beamspot Realistic50ns13TeVCollision --no_exec -n -1 --python_filename generator.py
+# with command line options: TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --era Run2_2016 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@frozen2016,RAW2DIGI,RECO --datatier RAWRECO,AODSIM --customise TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator_Reselect,TauAnalysis/MCEmbeddingTools/customisers.customisoptions --beamspot Realistic50ns13TeVCollision -n -1 --python_filename generator.py
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
 
 process = cms.Process('HLT',eras.Run2_2016)
-
-####### @FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -27,7 +25,7 @@ process.load('Configuration.StandardSequences.SimIdeal_cff')
 process.load('Configuration.StandardSequences.Digi_cff')
 process.load('Configuration.StandardSequences.SimL1Emulator_cff')
 process.load('Configuration.StandardSequences.DigiToRaw_cff')
-process.load('HLTrigger.Configuration.HLT_25ns10e33_v2_cff')
+process.load('HLTrigger.Configuration.HLT_25ns15e33_v4_cff')
 process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
@@ -63,17 +61,13 @@ process.source = cms.Source("PoolSource",
     secondaryFileNames = cms.untracked.vstring()
 )
 
-from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
-randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
-randSvc.populate()
-
 process.options = cms.untracked.PSet(
 
 )
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('TauAnalysis/EmbeddingProducer/python/EmbeddingPythia8Hadronizer_cfi.py nevts:-1'),
+    annotation = cms.untracked.string('TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py nevts:-1'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -114,16 +108,19 @@ process.AODSIMoutput = cms.OutputModule("PoolOutputModule",
 # Other statements
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_miniAODv2_v1', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v6', '')
 
 process.generator = cms.EDFilter("Pythia8HadronizerFilter",
     HepMCFilter = cms.PSet(
         filterName = cms.string('EmbeddingHepMCFilter'),
         filterParameters = cms.PSet(
-            ElHadCut = cms.untracked.string('El.Pt > 23 && Had.Pt > 18 &&  El.Eta < 2.2 && Had.Eta < 2.4 '),
-            ElMuCut = cms.untracked.string('(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)'),
-            HadHadCut = cms.untracked.string('Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2'),
-            MuHadCut = cms.untracked.string('Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4')
+            ElElCut = cms.untracked.string('El1.Pt > 0 && El2.Pt > 0'),
+            ElHadCut = cms.untracked.string('El.Pt > 0 && Had.Pt > 0'),
+            ElMuCut = cms.untracked.string('(El.Pt > 0&& Mu.Pt > 0) || (El.Pt > 0 && Mu.Pt > 0)'),
+            HadHadCut = cms.untracked.string('Had1.Pt > 0 && Had2.Pt > 0'),
+            MuHadCut = cms.untracked.string('Mu.Pt > 0 && Had.Pt > 0 && Mu.Eta < 2.1'),
+            MuMuCut = cms.untracked.string('Mu1.Pt > 0 && Mu2.Pt > 0'),
+            switchToMuonEmbedding = cms.bool(True)
         )
     ),
     PythiaParameters = cms.PSet(
@@ -181,13 +178,13 @@ for path in process.paths:
 
 # customisation of the process.
 
-# Automatic addition of the customisation function from TauAnalysis.EmbeddingProducer.customisers
-from TauAnalysis.EmbeddingProducer.customisers import customiseGenerator,customisoptions 
+# Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
+from TauAnalysis.MCEmbeddingTools.customisers import customiseGenerator_Reselect,customisoptions 
 
-#call to customisation function customiseGenerator imported from TauAnalysis.EmbeddingProducer.customisers
-process = customiseGenerator(process)
+#call to customisation function customiseGenerator_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseGenerator_Reselect(process)
 
-#call to customisation function customisoptions imported from TauAnalysis.EmbeddingProducer.customisers
+#call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
 # Automatic addition of the customisation function from HLTrigger.Configuration.customizeHLTforMC
@@ -197,6 +194,4 @@ from HLTrigger.Configuration.customizeHLTforMC import customizeHLTforFullSim
 process = customizeHLTforFullSim(process)
 
 # End of customisation functions
-
-# Customisation from command line
 

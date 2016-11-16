@@ -2,12 +2,12 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: PAT -s PAT --filein file:simulated_and_cleaned.root --fileout file:merged.root --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_Prompt_v8 --eventcontent MINIAODSIM --datatier MINIAODSIM --customise TauAnalysis/EmbeddingProducer/customisers.customisoptions,Configuration/DataProcessing/RecoTLR.customiseDataRun2Common_25ns,TauAnalysis/EmbeddingProducer/customisers.customiseMerging --customise_commands process.patTrigger.processName = cms.string('SIMembedding') -n -1 --no_exec --python_filename=merging.py
+# with command line options: PAT -s PAT --filein file:simulated_and_cleaned.root --fileout file:merged.root --era Run2_2016 --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --eventcontent MINIAODSIM --datatier USER --customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions,Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customiseMerging_Reselect --customise_commands process.patTrigger.processName = cms.string('SIMembedding') -n -1 --no_exec --python_filename=merging.py
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process('PAT')
+from Configuration.StandardSequences.Eras import eras
 
-####### @FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
+process = cms.Process('PAT',eras.Run2_2016)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -29,12 +29,6 @@ process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring('file:simulated_and_cleaned.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
-
-
-from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
-randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
-randSvc.populate()
-
 
 process.options = cms.untracked.PSet(
     allowUnscheduled = cms.untracked.bool(True)
@@ -68,7 +62,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v8', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v4', '')
 
 # Path and EndPath definitions
 process.Flag_trackingFailureFilter = cms.Path(process.goodVertices+process.trackingFailureFilter)
@@ -101,20 +95,26 @@ process.schedule = cms.Schedule(process.Flag_HBHENoiseFilter,process.Flag_HBHENo
 
 # customisation of the process.
 
-# Automatic addition of the customisation function from TauAnalysis.EmbeddingProducer.customisers
-from TauAnalysis.EmbeddingProducer.customisers import customisoptions,customiseMerging 
+# Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseMerging_Reselect 
 
-#call to customisation function customisoptions imported from TauAnalysis.EmbeddingProducer.customisers
+#call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseMerging imported from TauAnalysis.EmbeddingProducer.customisers
-process = customiseMerging(process)
+#call to customisation function customiseMerging_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseMerging_Reselect(process)
 
 # Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
-from Configuration.DataProcessing.RecoTLR import customiseDataRun2Common_25ns 
+from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2016 
 
-#call to customisation function customiseDataRun2Common_25ns imported from Configuration.DataProcessing.RecoTLR
-process = customiseDataRun2Common_25ns(process)
+#call to customisation function customisePostEra_Run2_2016 imported from Configuration.DataProcessing.RecoTLR
+process = customisePostEra_Run2_2016(process)
+
+# Automatic addition of the customisation function from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
+from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet import customizeHitRecoveryInGluedDetOn 
+
+#call to customisation function customizeHitRecoveryInGluedDetOn imported from RecoTracker.Configuration.customizeMinPtForHitRecoveryInGluedDet
+process = customizeHitRecoveryInGluedDetOn(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)

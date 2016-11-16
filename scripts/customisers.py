@@ -234,18 +234,21 @@ def customiseGenerator_Reselect(process):
 	return customiseGenerator(process,reselect=True)
 
 ################################ Customizer for merging ###########################
-def keepMerged():
+def keepMerged(dataTier="SELECT"):
 	ret_vstring = cms.untracked.vstring()
-	ret_vstring.append("drop *_*_*_SELECT")
-	ret_vstring.append("drop *_*_*_RESELECT")
+	ret_vstring.append("drop *_*_*_"+dataTier)
 	ret_vstring.append("keep *_generator_*_SIMembedding")
 	return ret_vstring
 
 
 
-def customiseMerging(process, changeProcessname=True):
+def customiseMerging(process, changeProcessname=True,reselect=False):
 	if changeProcessname:
 		process._Process__name = "MERGE"
+	if reselect:
+		dataTier="RESELECT"
+	else:
+		dataTier="SELECT"
 
 
 	process.source.inputCommands = cms.untracked.vstring()
@@ -278,8 +281,8 @@ def customiseMerging(process, changeProcessname=True):
 
 
 	process.merge_step += process.vertexreco
-	process.unsortedOfflinePrimaryVertices.beamSpotLabel = cms.InputTag("offlineBeamSpot","","SELECT")
-	process.ak4CaloJetsForTrk.srcPVs = cms.InputTag("firstStepPrimaryVertices","","SELECT")
+	process.unsortedOfflinePrimaryVertices.beamSpotLabel = cms.InputTag("offlineBeamSpot","",dataTier)
+	process.ak4CaloJetsForTrk.srcPVs = cms.InputTag("firstStepPrimaryVertices","",dataTier)
 
 	process.muons.FillDetectorBasedIsolation = cms.bool(False)
 	process.muons.FillSelectorMaps = cms.bool(False)
@@ -332,10 +335,11 @@ def customiseMerging(process, changeProcessname=True):
 	 # process.load('PhysicsTools.PatAlgos.slimming.slimmedGenJets_cfi')
 	
 	
-	return modify_outputModules(process, [keepMerged()])
+	return modify_outputModules(process, [keepMerged(dataTier)])
 
-
-
+def customiseMerging_Reselect(process, changeProcessname=True):
+	return customiseMerging(process, changeProcessname=changeProcessname, reselect=True)
+	
 ################################ cross Customizers ###########################
 
 def customiseLHEandCleaning(process,reselect=False):

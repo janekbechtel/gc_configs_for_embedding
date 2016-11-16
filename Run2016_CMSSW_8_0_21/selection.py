@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --era Run2_2016 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect --filein /store/data/Run2016B/DoubleMuon/RAW/v2/000/274/198/00000/4A7B3B0C-5326-E611-8E1A-02163E0141C0.root --fileout RAWskimmed.root -n 60 --no_exec --python_filename=selection.py
+# with command line options: RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled --data --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --era Run2_2016 --runUnscheduled --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect --filein /store/data/Run2016B/DoubleMuon/RAW/v2/000/274/198/00000/4A7B3B0C-5326-E611-8E1A-02163E0141C0.root --fileout RAWskimmed.root -n 60 --python_filename=selection.py
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
