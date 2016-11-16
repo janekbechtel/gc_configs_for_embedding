@@ -38,7 +38,7 @@ cmsDriver.py LHEprodandCLEAN --filein file:RAWskimmed.root \
 --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,\
 RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,\
 TauAnalysis/MCEmbeddingTools/customisers.customisoptions,\
-TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning \
+TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning_Reselect \
 --customise_commands "process.externalLHEProducer.switchToMuonEmbedding = cms.bool(True)" \
 --no_exec -n -1 --python_filename lheprodandcleaning.py
 
@@ -49,7 +49,7 @@ cmsDriver.py TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.
 --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --era Run2_2016 \
 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:25ns10e33_v2,RAW2DIGI,RECO \
 --datatier RAWRECO,AODSIM --customise \
-TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator,\
+TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator_Reselect,\
 TauAnalysis/MCEmbeddingTools/customisers.customisoptions \
 --beamspot Realistic50ns13TeVCollision --no_exec -n -1 --python_filename generator.py
 
