@@ -15,7 +15,7 @@ cd CMSSW_8_0_21/src
 
 cmsenv
 
-git cms-merge-topic swayand:fixingforembedding_cmss80x
+git cms-merge-topic swayand:fixingforembedding_cmss80x_fix
 
 scramv1 b -j12
 
