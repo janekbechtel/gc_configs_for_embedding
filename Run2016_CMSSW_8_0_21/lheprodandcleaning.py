@@ -5,6 +5,10 @@
 # with command line options: LHEprodandCLEAN --filein file:RAWskimmed.root --fileout file:lhe_and_cleaned.root --runUnscheduled --data --era Run2_2016 --scenario pp --conditions 80X_dataRun2_2016SeptRepro_v4 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2016,RecoTracker/Configuration/customizeMinPtForHitRecoveryInGluedDet.customizeHitRecoveryInGluedDetOn,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning_Reselect -n -1 --python_filename lheprodandcleaning.py
 import FWCore.ParameterSet.Config as cms
 
+
+####@FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
+
+
 from Configuration.StandardSequences.Eras import eras
 
 process = cms.Process('RECO',eras.Run2_2016)

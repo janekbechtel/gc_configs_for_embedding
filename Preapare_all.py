@@ -1,7 +1,7 @@
 import os,stat
 
 class finale_state():
-  def __init__(self, name, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_18" ):
+  def __init__(self, name, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_21" ):
     self.name = name
     self.runs = runs
     self.inputfolder = inputfolder

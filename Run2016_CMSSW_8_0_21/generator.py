@@ -9,6 +9,8 @@ from Configuration.StandardSequences.Eras import eras
 
 process = cms.Process('HLT',eras.Run2_2016)
 
+####@FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
+
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
