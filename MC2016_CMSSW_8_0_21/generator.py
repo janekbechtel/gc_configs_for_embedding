@@ -182,5 +182,7 @@ process = customizeHLTforFullSim(process)
 # Customisation from command line
 process.source.inputCommands.append('drop *_externalLHEProducer_*_SIM')
 
-# Customisation from command line
-process.source.inputCommands.append('drop *_externalLHEProducer_*_SIM')
+from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
+randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
+randSvc.populate()
+####### @FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@

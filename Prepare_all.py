@@ -1,7 +1,7 @@
 import os,stat
 
 class finale_state():
-	def __init__(self, name, selection=False, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_21" ):
+	def __init__(self, name, selection=False, generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_21", add_dbs=None ):
 		self.selection=selection
 		self.name = name
 		self.runs = runs
@@ -15,7 +15,9 @@ class finale_state():
 		for add_run in self.runs:
 			self.files_to_copy.append(add_run+'.dbs')
 			if not os.path.exists(self.name+'/'+add_run+'.conf'):
-				self.write_cfg(add_run)
+				self.write_cfg(add_run=add_run)
+		if add_dbs:
+		  self.write_cfg(add_dbs=add_dbs)
 		for file_to_copy in self.files_to_copy:
 			if os.path.exists(self.name+'/'+file_to_copy):
 				continue
@@ -33,7 +35,10 @@ class finale_state():
 			else:
 				self.copy_file(file_to_copy)
 		if not os.path.exists(self.name+'/while.sh'+file_to_copy):
-			self.write_while(self.runs)
+			gc_configs_base = self.runs
+			if add_dbs:
+			  gc_configs_base.append('DAS')
+			self.write_while(gc_configs_base)
 	def copy_file(self, in_file_name, copy_from_folder = './' ,add_fragment_to_end=""):
 			in_file = open (copy_from_folder.rstrip('/')+'/'+in_file_name, 'r')
 			file_str = in_file.read()
@@ -42,13 +47,20 @@ class finale_state():
 			out_file = open(self.name+'/'+in_file_name,'w')
 			out_file.write(file_str)
 			out_file.close()
-	def write_cfg(self, add_run):
-			out_file = open(self.name+'/'+add_run+'.conf','w')
+	def write_cfg(self, add_run=None, add_dbs=None):
+			try:
+			  out_file = open(self.name+'/'+add_run+'.conf','w')
+			except:
+			  out_file = open(self.name+'/DAS.conf','w')
 			out_file.write('[global]\n')
 			out_file.write('include=grid_control_fullembedding_data_base.conf\n')
-			out_file.write('workdir = /portal/ekpbms2/home/${USER}/embedding/gc_workdir/TauEmbedding_'+self.name+'_'+add_run+'\n')
+			out_file.write('workdir = /portal/ekpbms2/home/${USER}/embedding/gc_workdir/TauEmbedding_'+out_file.name.split('.')[0]+'\n')
 			out_file.write('[CMSSW]\n')
-			out_file.write('dataset = TauEmbedding_'+self.name+'_'+add_run+' :  list:'+add_run+'.dbs\n')
+			if add_run:
+			  out_file.write('dataset = TauEmbedding_'+self.name+'_'+add_run+' :  list:'+add_run+'.dbs\n')
+			if add_dbs:
+			   for akt_name in add_dbs:
+			      out_file.write('dataset = TauEmbedding_'+self.name+'_'+akt_name+' :  dbs:'+add_dbs[akt_name]+'\n')
 			out_file.close()
 	def write_while(self, all_runs=[]):
 			out_file = open(self.name+'/while.sh','w')
@@ -59,7 +71,7 @@ class finale_state():
 			out_file.write('while [ -f ".lock" ]\n')
 			out_file.write('do\n')
 			for add_run in all_runs:
-				out_file.write('go.py '+self.name+'/'+add_run+'.conf -G \n')
+				out_file.write('go.py '+add_run+'.conf -G \n')
 			out_file.write('echo "rm .lock"\n')
 			out_file.write('sleep 2\n')
 			out_file.write('done\n')
@@ -68,9 +80,25 @@ class finale_state():
 			
 
 
+
+
+generator_frag_map = {}
+
+generator_frag_map["MuTau_"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))'
+generator_frag_map["ElTau_"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElHadCut = cms.untracked.string("El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4 "))'
+generator_frag_map["ElMu_"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElMuCut = cms.untracked.string("(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)"))'
+generator_frag_map["TauTau_"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(HadHadCut = cms.untracked.string("Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2"))' 
+
+dbs_map = {}
+dbs_map["DYJetsToLLM50_FlatPU28to62"]="/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16DR80-FlatPU28to62HcalNZSRAWAODSIM_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/RAWAODSIM"
+
+
+for akt_final_states in generator_frag_map:
+  finale_state(name=akt_final_states+'rmc2016_v1', selection=True, runs=[], inputfolder="MC2016_CMSSW_8_0_21" ,generator_frag = generator_frag_map[akt_final_states],add_dbs=dbs_map)
+
 to_process = []
 
-to_process.append(finale_state(name='MuTau_run2016_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
+#to_process.append(finale_state(name='MuTau_run2016_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
 #to_process.append(finale_state(name='MuTau_Gridka_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
 #to_process.append(finale_state(name='MuTau_run2015_v1', selection=False, runs=["Run2015D"], inputfolder="Run2015_CMSSW_7_6_5_p1" ,generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))' ))
 #to_process.append(finale_state(name='ElTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElHadCut = cms.untracked.string("El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4 "))' ))

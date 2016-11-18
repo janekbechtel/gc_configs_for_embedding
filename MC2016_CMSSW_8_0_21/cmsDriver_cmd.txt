@@ -2,12 +2,14 @@
 
 ### Embedding on MC
 dataset=/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16DR80-FlatPU28to62HcalNZSRAWAODSIM_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/RAWAODSIM
-/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring16DR80-PUSpring16RAWAODSIM_80X_mcRun2_asymptotic_2016_v3-v1/RAWAODSIM
+
 
 ### Step 0p5: Selection of Z->MuMu
 
-cmsDriver.py step0p5 \
 --filein file:input/aaa.root \
+
+cmsDriver.py step0p5 \
+--filein "dbs:/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16DR80-FlatPU28to62HcalNZSRAWAODSIM_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/RAWAODSIM" \
 --mc \
 --eventcontent RAWRECOSIMHLT,MINIAOD --datatier RAWRECOSIM,MINIAOD \
 --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6  --era Run2_2016 \

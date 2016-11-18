@@ -5,6 +5,8 @@
 # with command line options: step1 --filein file:PreRAWskimmed.root --mc --eventcontent RAWRECOSIMHLT,MINIAOD --datatier RAWRECOSIM,MINIAOD --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --era Run2_2016 --step RAW2DIGI,RECO,PAT --runUnscheduled --customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect --fileout RAWskimmed.root -n 100 --no_exec --python_filename=selection.py
 import FWCore.ParameterSet.Config as cms
 
+####### @FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@
+
 from Configuration.StandardSequences.Eras import eras
 
 process = cms.Process('RECO',eras.Run2_2016)
@@ -136,5 +138,10 @@ from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllMC
 
 #call to customisation function miniAOD_customizeAllMC imported from PhysicsTools.PatAlgos.slimming.miniAOD_tools
 process = miniAOD_customizeAllMC(process)
+
+from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper
+randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
+randSvc.populate()
+
 
 # End of customisation functions
