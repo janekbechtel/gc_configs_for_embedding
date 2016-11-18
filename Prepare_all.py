@@ -1,7 +1,7 @@
 import os,stat
 
 class finale_state():
-	def __init__(self, name, selection, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_21" ):
+	def __init__(self, name, selection=False, generator_frag, runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G'], inputfolder = "Run2016_CMSSW_8_0_21" ):
 		self.selection=selection
 		self.name = name
 		self.runs = runs
@@ -71,6 +71,7 @@ class finale_state():
 to_process = []
 
 to_process.append(finale_state(name='MuTau_run2016_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
+#to_process.append(finale_state(name='MuTau_Gridka_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
 #to_process.append(finale_state(name='MuTau_run2015_v1', selection=False, runs=["Run2015D"], inputfolder="Run2015_CMSSW_7_6_5_p1" ,generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))' ))
 #to_process.append(finale_state(name='ElTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElHadCut = cms.untracked.string("El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4 "))' ))
 #to_process.append(finale_state(name='ElMu_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElMuCut = cms.untracked.string("(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)"))' ))
