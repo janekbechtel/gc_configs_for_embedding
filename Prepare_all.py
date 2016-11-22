@@ -30,7 +30,7 @@ class finale_state():
 			if not os.path.exists(self.name+'/'+add_run+'.conf'):
 				self.write_cfg(add_run=add_run)
 		if add_dbs:
-			self.write_cfg(add_dbs=add_dbs)	
+			self.write_cfg(add_dbs=add_dbs)
 		cmsRun_order_str = 'config file = '
 		for cmsRun_cfg in self.cmsRun_order:
 			cmsRun_order_str += cmsRun_cfg+'\n\t\t'
@@ -104,16 +104,8 @@ class finale_state():
 			generator_frag_map["TauTau"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(HadHadCut = cms.untracked.string("Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2"))' 
 		return generator_frag_map
 
-final_states=["MuTau","ElTau","ElMu","TauTau"]
+if __name__ == "__main__":
+	final_states=["MuTau","ElTau","ElMu","TauTau"]
 
-for finalstate in final_states:
-  finale_state(finalstate=finalstate, identifier="data", runs=["Run2016B","Run2016C","Run2016D","Run2016E","Run2016F","Run2016G","Run2016H"], inputfolder="Run2016_CMSSW_8_0_21", add_dbs=None)
-
-to_process = []
-
-#to_process.append(finale_state(name='MuTau_run2016_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
-#to_process.append(finale_state(name='MuTau_Gridka_2016D_v1', selection=True, runs=["Run2016D"], inputfolder="Run2016_CMSSW_8_0_21" ,generator_frag = '' ))
-#to_process.append(finale_state(name='MuTau_run2015_v1', selection=False, runs=["Run2015D"], inputfolder="Run2015_CMSSW_7_6_5_p1" ,generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(MuHadCut = cms.untracked.string("Mu.Pt > 18 && Had.Pt > 18 && Mu.Eta < 2.2 && Had.Eta < 2.4"))' ))
-#to_process.append(finale_state(name='ElTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElHadCut = cms.untracked.string("El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4 "))' ))
-#to_process.append(finale_state(name='ElMu_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(ElMuCut = cms.untracked.string("(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)"))' ))
-#to_process.append(finale_state(name='TauTau_test2', generator_frag = 'process.generator.HepMCFilter.filterParameters = cms.PSet(HadHadCut = cms.untracked.string("Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2"))' ))
+	for finalstate in final_states:
+		finale_state(finalstate=finalstate, identifier="data", runs=["Run2016B","Run2016C","Run2016D","Run2016E","Run2016F","Run2016G","Run2016H"], inputfolder="Run2016_CMSSW_8_0_21", add_dbs=None)
