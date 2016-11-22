@@ -36,7 +36,9 @@ class finale_state():
 			cmsRun_order_str += cmsRun_cfg+'\n\t\t'
 		rp_base_cfg = {}
 		rp_base_cfg['__CMSRUN_ORDER__'] = cmsRun_order_str
-		se_output_pattern_str= 'se output pattern = '+self.finalstate+'_fullembedding_'+self.identifier+'_'+self.inputfolder+'_freiburg/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
+		se_path_str = 'se path = srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/'+os.popen("echo $USER").read().rstrip()+'/gc_storage'
+		rp_base_cfg['__SE_PATH__']=se_path_str
+		se_output_pattern_str= 'se output pattern = '+self.finalstate+'_fullembedding_'+self.identifier+'_freiburg/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
 		rp_base_cfg['__SE_OUTPUT_PATTERN__']=se_output_pattern_str
 		self.copy_file('grid_control_fullembedding_data_base.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
 		
@@ -103,9 +105,3 @@ class finale_state():
 		elif this_finalstate=="TauTau":
 			generator_frag_map["TauTau"] = 'process.generator.HepMCFilter.filterParameters = cms.PSet(HadHadCut = cms.untracked.string("Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2"))' 
 		return generator_frag_map
-
-if __name__ == "__main__":
-	final_states=["MuTau","ElTau","ElMu","TauTau"]
-
-	for finalstate in final_states:
-		finale_state(finalstate=finalstate, identifier="data", runs=["Run2016B","Run2016C","Run2016D","Run2016E","Run2016F","Run2016G","Run2016H"], inputfolder="Run2016_CMSSW_8_0_21", add_dbs=None)
