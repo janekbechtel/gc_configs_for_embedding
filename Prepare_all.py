@@ -36,7 +36,7 @@ class finale_state():
 			cmsRun_order_str += cmsRun_cfg+'\n\t\t'
 		rp_base_cfg = {}
 		rp_base_cfg['__CMSRUN_ORDER__'] = cmsRun_order_str
-		se_path_str = 'se path = srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/user/'+os.popen("echo $USER").read().rstrip()+'/gc_storage'
+		se_path_str = 'se path = srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/user/'+os.environ["USER"]+'/gc_storage'
 		rp_base_cfg['__SE_PATH__']=se_path_str
 		se_output_pattern_str= 'se output pattern = '+self.finalstate+'_fullembedding_'+self.identifier+'_freiburg/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
 		rp_base_cfg['__SE_OUTPUT_PATTERN__']=se_output_pattern_str
