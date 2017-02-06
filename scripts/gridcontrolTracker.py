@@ -12,7 +12,6 @@ if __name__ == '__main__':
 						help="GC working directory [Default: here]")
 	parser.add_argument("--loop", default=None,	help="Loop the script all LOOP seconds.")
 	parser.add_argument("-o","--output", default='tracking.json',	help="Output file. If it exists, values stay and new values will be added to the end.")
-	parser.add_argument("--include-job-ids", default=False, action='store_true',	help="Save not only total amount of jobs per state but also every job ID for every state. Will increase output file size by a lot.")
 
 	args = parser.parse_args()
 	
@@ -47,40 +46,51 @@ if __name__ == '__main__':
 		exitcode=[]
 		submitted=[]
 		current_time = str(datetime.now())
+		states={}
+		possible_states=[]
+		runtime={}
+		if os.path.exists(os.path.join(workdir,'jobs')):
+			for d in os.listdir(os.path.join(workdir,'jobs')):
+				f=open(os.path.join(workdir,'jobs',d))
+				for line in f.readlines():
+					if not line[:9]=='retcode=0' and line[:8]=='retcode=':
+						exitcode.append(line[8:].strip('\n'))
+					elif line[:7]=='status=':
+						job_status=line[8:].strip('"\n')
+						if job_status not in possible_states:
+							possible_states.append(job_status)
+							states.setdefault(job_status,[])
+							states[job_status].append(int(d[4]))
+						else:
+							states[job_status].append(int(d.strip('job_').strip('.txt')))
+					elif not line.strip('\n')=='runtime=-1' and not line.strip('\n')=='runtime=0' and line[:8]=='runtime=':
+						runtime.setdefault(d.strip('job_').strip('.txt'),float(line[8:].strip('\n')))
+				f.close()
+
+		n_success=0
+		n_failed=0
+		n_submitted=0
+		n_running=0
+		n_ready=0
 		
-		if os.path.exists(os.path.join(workdir,'sandbox')):
-			for d in os.listdir(os.path.join(workdir,'sandbox')):
-				submitted.append(d)
-				
-		if os.path.exists(os.path.join(workdir,'output')):
-
-			for d in os.listdir(os.path.join(workdir,'output')):
-				if d[4:] not in submitted:
-					done.append(d[4:])
-					f=open(os.path.join(workdir,'output',d,'job.info'))
-					for line in f.readlines():
-						line=line.strip('\n')
-						if line=='EXITCODE=0':
-							
-							success.append(d[4:])
-							continue
-						elif line[:9]=='EXITCODE=':
-							failed.append(d[4:])
-							exitcode.append(line[9:])
-							continue
-					f.close()
-
-
-		n_success=len(success)
-		n_failed=len(failed)
-		n_submitted=len(submitted)
-		i=0
+		if 'SUCCESS' in possible_states:
+			n_success=len(states['SUCCESS'])
+		if 'READY' in possible_states:
+			n_ready=len(states['READY'])
+		if 'FAILED' in possible_states:
+			n_failed=len(states['FAILED'])
+		if 'SUBMITTED' in possible_states:
+			n_submitted=len(states['SUBMITTED'])
+		if 'RUNNING' in possible_states:
+			n_running=len(states['RUNNING'])
 		codes={}
 		for code in set(exitcode):
 			codes.setdefault(code,exitcode.count(code))
 		print 'Time:		'+current_time[:-7]
 		print 'Total jobs:	'+str(n_jobs)
-		print '\033[94m'+'Submitted:	'+str(n_submitted)+'\033[0m'
+		print 'Submitted:	'+str(n_submitted)
+		print 'Ready:		'+str(n_ready)
+		print '\033[94m'+'Running:	'+str(n_running)+'\033[0m'
 		print '\033[92m'+'Successful:	'+str(n_success)+'\033[0m'
 		print '\033[91m'+'Failed:		'+str(n_failed)+'\033[0m'
 		if len(exitcode)>0:
@@ -93,54 +103,41 @@ if __name__ == '__main__':
 		
 			t_json=open(args.output,'r+')
 			trackingdict = json.load(t_json)
+			trackingdict.setdefault('INFO',workdir)
+
 			t_json.close()
 		else:
 			trackingdict = {}
+			trackingdict.setdefault('INFO',workdir)
 			trackingdict.setdefault('SUBMITTED',[])
-		#	trackingdict.setdefault('RUNNING',[])
+			trackingdict.setdefault('READY',[])
+			trackingdict.setdefault('RUNNING',[])
 			trackingdict.setdefault('FAILED',[])
 			trackingdict.setdefault('SUCCESS',[])
 			trackingdict.setdefault('TOTAL',[])
 			trackingdict.setdefault('ERRORCODE',[])
-			if args.include_job_ids:
-				trackingdict.setdefault('JOB_ID_FAILED',[])
-				trackingdict.setdefault('JOB_ID_SUCCESS',[])
-				trackingdict.setdefault('JOB_ID_SUBMITTED',[])
-				trackingdict.setdefault('JOB_ID_ERRORCODE',[])
+			trackingdict.setdefault('RUNTIME',[])
+			trackingdict.setdefault('JOB_ID',[])
+
 			trackingdict['SUBMITTED']={}
-			#trackingdict['RUNNING']={}
+			trackingdict['READY']={}
+			trackingdict['RUNNING']={}
 			trackingdict['FAILED']={}
 			trackingdict['SUCCESS']={}
-			trackingdict['TOTAL']={}
+			trackingdict['TOTAL']=n_jobs
 			trackingdict['ERRORCODE']={}
-			if args.include_job_ids:
-				trackingdict['JOB_ID_FAILED']={}
-				trackingdict['JOB_ID_SUCCESS']={}
-				trackingdict['JOB_ID_SUBMITTED']={}
-				trackingdict['JOB_ID_ERRORCODE']={}
-				
-				
+			trackingdict['RUNTIME']={}
+			trackingdict['JOB_ID']={}
+	
 		trackingdict['SUBMITTED'].update({current_time: n_submitted})
-	#	trackingdict['RUNNING'].update({current_time: []})
+		trackingdict['READY'].update({current_time: n_ready})
+		trackingdict['RUNNING'].update({current_time: n_running})
 		trackingdict['FAILED'].update({current_time: n_failed})
 		trackingdict['SUCCESS'].update({current_time: n_success})
-		trackingdict['TOTAL'].update({current_time: n_jobs})
 		trackingdict['ERRORCODE'].update({current_time: codes})
-		if args.include_job_ids:
-			trackingdict['JOB_ID_FAILED'].update({current_time: []})
-			trackingdict['JOB_ID_SUCCESS'].update({current_time: []})
-			trackingdict['JOB_ID_SUBMITTED'].update({current_time: []})
-			trackingdict['JOB_ID_ERRORCODE'].update({current_time: []})
-			for x in success:
-				trackingdict['JOB_ID_SUCCESS'][current_time].append(x)
-			for x in failed:
-				trackingdict['JOB_ID_FAILED'][current_time].append(x)
-			for x in submitted:
-				trackingdict['JOB_ID_SUBMITTED'][current_time].append(x)
-			for x in exitcode:
-				trackingdict['JOB_ID_ERRORCODE'][current_time].append(x)
-			
-		
+		trackingdict['RUNTIME'].update(runtime)
+		trackingdict['JOB_ID'].update(states)
+
 		t_json=open(args.output,'w')
 		t_json.write(json.dumps(trackingdict, sort_keys=True, indent=2))
 		t_json.close()
