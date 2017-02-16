@@ -1,7 +1,7 @@
 import os,stat
 
 class finale_state():
-	def __init__(self, finalstate, identifier="", generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G','Run2016H'], add_dbs=None, inputfolder = "Run2016_CMSSW_8_0_21",generator_frag_map=None):
+	def __init__(self, finalstate, identifier="", generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G','Run2016H'], add_dbs=None, inputfolder = "Run2016_CMSSW_8_0_26",generator_frag_map=None):
 		self.finalstate=finalstate
 		self.identifier=identifier
 		self.name = finalstate+"_"+identifier
@@ -23,7 +23,8 @@ class finale_state():
 		for file_to_copy in ['preselection.py','selection.py','lheprodandcleaning.py','generator.py','merging.py']:
 			add_fragment_to_end=[]
 			if is_first:
-				add_fragment_to_end.append('from TauAnalysis.MCEmbeddingTools.customisers import customise_for_gc')
+				with open('customise_for_gc.py','r') as function_to_add:
+					add_fragment_to_end.append(function_to_add.read())
 				add_fragment_to_end.append('process = customise_for_gc(process)')
 			else:
 				add_fragment_to_end.append('####@FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@')
