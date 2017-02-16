@@ -21,9 +21,18 @@ class finale_state():
 		is_first = True ## can be late used to init the first config with customize_for_gc and the later with the dummy stings 
 		self.cmsRun_order = []
 		for file_to_copy in ['preselection.py','selection.py','lheprodandcleaning.py','generator.py','merging.py']:
-		        add_fragment_to_end = ""
-			if file_to_copy == 'generator.py':
-				add_fragment_to_end=generator_frag
+			add_fragment_to_end=[]
+			if is_first:
+				add_fragment_to_end.append('from TauAnalysis.MCEmbeddingTools.customisers import customise_for_gc')
+				add_fragment_to_end.append('process = customise_for_gc(process)')
+			else:
+				add_fragment_to_end.append('####@FILE_NAMES@, @SKIP_EVENTS@, @MAX_EVENTS@')
+			if file_to_copy in ['lheprodandcleaning.py','generator.py']:
+				add_fragment_to_end.append('from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper')
+				add_fragment_to_end.append('randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)')
+				add_fragment_to_end.append('randSvc.populate()')
+				if file_to_copy == 'generator.py':
+					add_fragment_to_end.append(generator_frag)
 			if self.copy_file(file_to_copy, add_fragment_to_end=add_fragment_to_end, skip_if_not_there=True):
 				is_first = False
 				self.cmsRun_order.append(file_to_copy)
@@ -46,7 +55,7 @@ class finale_state():
 		self.copy_file('grid_control_fullembedding_data_base.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
 		
 		
-	def copy_file(self, in_file_name, copy_from_folder = None ,add_fragment_to_end="", skip_if_not_there=False, overwrite=False, replace_dict={}):
+	def copy_file(self, in_file_name, copy_from_folder = None ,add_fragment_to_end=[], skip_if_not_there=False, overwrite=False, replace_dict={}):
 		if not copy_from_folder:
 			copy_from_folder = self.inputfolder
 		if skip_if_not_there and not os.path.isfile(copy_from_folder.rstrip('/')+'/'+in_file_name):
@@ -56,7 +65,8 @@ class finale_state():
 		in_file.close()
 		if os.path.isfile(self.name+'/'+in_file_name) and not overwrite: ## do not overwrit if the file exists
 			return True
-		file_str += add_fragment_to_end
+		for fragment in add_fragment_to_end:
+			file_str += '\n'+fragment
 		for replace in replace_dict: ## replace Variable by the value. 
 			file_str = file_str.replace(replace,replace_dict[replace])
 		out_file = open(self.name+'/'+in_file_name,'w')
