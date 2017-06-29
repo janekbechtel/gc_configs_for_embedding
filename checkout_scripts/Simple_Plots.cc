@@ -26,5 +26,5 @@ void
 Simple_Plots::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup){
   edm::Handle<GenEventInfoProduct> GenEventInfo;
   iEvent.getByToken(MyGenEventInfoProduct_, GenEventInfo);
-  std::cout<<GenEventInfo->weight()<<std::endl;}
+  std::cout << GenEventInfo->weight() << std::endl;}
 DEFINE_FWK_MODULE(Simple_Plots);

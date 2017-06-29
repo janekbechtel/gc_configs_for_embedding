@@ -2,13 +2,16 @@
 
 export SCRAM_ARCH=slc6_amd64_gcc530
 export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
-source $VO_CMS_SW_DIR/cmsset_default.sh
+source /cvmfs/cms.cern.ch/cmsset_default.sh
 
-scramv1 project CMSSW CMSSW_8_0_26_patch1
+cmsrel CMSSW_8_0_26_patch1
 cd CMSSW_8_0_26_patch1/src
-eval `scramv1 runtime -sh`
+cmsenv
 
+mkdir Embedding/Simple_Plots/plugins/ -p
+mkdir Embedding/Simple_Plots/python/ 
 
-cd $CMSSW_BASE/src
-
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/BuildFile.xml -P Embedding/Simple_Plots/plugins/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/Simple_Plots.cc -P Embedding/Simple_Plots/plugins/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/config_file.py -P Embedding/Simple_Plots/python/
 

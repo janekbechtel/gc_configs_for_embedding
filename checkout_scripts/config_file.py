@@ -5,7 +5,7 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-      '/store/user/jbechtel/gc_storage/New_Freiburg_ElTau_fullembedding_data_2016_CMSSW821_freiburg/TauEmbedding_ElTau_data_2016_CMSSW821_Run2016G/1/merged_10100.root'
+      '/store/user/jbechtel/MuTau_data_2016_CMSSW826_freiburg/TauEmbedding_MuTau_data_2016_CMSSW826_Run2016B/1/merged_0.root'
    )
 )
     
