@@ -9,7 +9,7 @@ process.source = cms.Source("PoolSource",
    )
 )
     
-process.demo = cms.EDAnalyzer('Simple_Plots',
+process.demo = cms.EDAnalyzer('ReadGeneratorWeight',
                genSource = cms.InputTag("generator")
 )
 
