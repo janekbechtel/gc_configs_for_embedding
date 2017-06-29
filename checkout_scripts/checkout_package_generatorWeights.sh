@@ -12,6 +12,6 @@ mkdir Embedding/plugins/ -p
 mkdir Embedding/python/ 
 
 wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/BuildFile.xml -P Embedding/plugins/
-wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/Simple_Plots.cc -P Embedding/plugins/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/ReadGeneratorWeight.cc -P Embedding/plugins/
 wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/config_file.py -P Embedding/python/
 
