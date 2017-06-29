@@ -11,7 +11,7 @@ cmsenv
 mkdir Embedding/GeneratorWeight/plugins/ -p
 mkdir Embedding/GeneratorWeight/python/ 
 
-wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/BuildFile.xml -P Embedding/plugins/
-wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/GeneratorWeight.cc -P Embedding/plugins/
-wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/config_file.py -P Embedding/python/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/BuildFile.xml -P Embedding/GeneratorWeight/plugins/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/GeneratorWeight.cc -P Embedding/GeneratorWeight/plugins/
+wget https://raw.githubusercontent.com/swayand/gc_configs_for_embedding/master/checkout_scripts/config_file.py -P Embedding/GeneratorWeight/python/
 
