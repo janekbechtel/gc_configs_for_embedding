@@ -34,11 +34,15 @@ class finale_state():
 				add_fragment_to_end.append('randSvc.populate()')
 				if file_to_copy == 'generator.py':
 					add_fragment_to_end.append(generator_frag)
+			if file_to_copy == 'merging.py':
+				if "Run201" in self.inputfolder:
+					add_fragment_to_end.append('from TauAnalysis.MCEmbeddingTools.customisers import customiseKeepPrunedGenParticles')
+					add_fragment_to_end.append('process = customiseKeepPrunedGenParticles(process)')
 			if self.copy_file(file_to_copy, add_fragment_to_end=add_fragment_to_end, skip_if_not_there=True):
 				is_first = False
 				self.cmsRun_order.append(file_to_copy)
 	def copy_gcconfigs(self, runs=[], add_dbs=None):
-	  	for add_run in runs:
+		for add_run in runs:
 			self.copy_file(add_run+'.dbs', copy_from_folder = 'dbs')
 			if not os.path.exists(self.name+'/'+add_run+'.conf'):
 				self.write_cfg(add_run=add_run)
