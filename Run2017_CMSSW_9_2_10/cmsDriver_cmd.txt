@@ -56,7 +56,7 @@ TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning \
 
 cmsDriver.py TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py \
 --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root \
---conditions 90X_upgrade2017_realistic_v20 --era Run2_2017 \
+--conditions 92X_upgrade2017_realistic_v7 --era Run2_2017 \
 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:@relval2016,RAW2DIGI,RECO \
 --datatier RAWRECO,AODSIM --customise \
 TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator,\
@@ -69,7 +69,7 @@ TauAnalysis/MCEmbeddingTools/customisers.customisoptions \
 cmsDriver.py PATSIM --filein file:simulated_and_cleaned_inAODSIM.root \
 --fileout file:simulated_and_cleaned_inMINIAOD.root --runUnscheduled --era Run2_2017 \
 --customise_commands "process.patTrigger.processName = cms.string('SIMembedding')" \
---data --conditions 90X_upgrade2017_realistic_v20 --era Run2_2017 \
+--data --conditions 92X_upgrade2017_realistic_v7 --era Run2_2017 \
 --eventcontent MINIAODSIM --datatier MINIAODSIM --step PAT \
 --no_exec -n -1 --python_filename pat_for_sim.py
 
