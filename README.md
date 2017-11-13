@@ -9,16 +9,20 @@ export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-cmsrel CMSSW_8_0_26_patch1
+scram project CMSSW_9_2_3_patch2
 
-cd CMSSW_8_0_26_patch1/src
+cd CMSSW_9_2_3_patch2/src
 
 cmsenv
 
-git cms-merge-topic swayand:fixingforembedding_cmss8026p1
+git cms-init
+
+git cms-addpkg TauAnalysis/MCEmbeddingTools
+
+git cms-merge-topic perahrens:embedding_cmssw92x
 
 scramv1 b -j12
 
 git clone https://github.com/janekbechtel/grid-control
 
-git clone https://github.com/swayand/gc_configs_for_embedding.git
+git clone https://github.com/pahrens/gc_configs_for_embedding.git
