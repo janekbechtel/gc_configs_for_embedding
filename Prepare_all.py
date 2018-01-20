@@ -34,6 +34,11 @@ class finale_state():
 				add_fragment_to_end.append('randSvc.populate()')
 				if file_to_copy == 'generator.py':
 					add_fragment_to_end.append(generator_frag)
+			if file_to_copy == 'lheprodandcleaning.py':
+				if self.finalstate == "MuEmb":
+					add_fragment_to_end.append('process.externalLHEProducer.particleToEmbed = cms.int32(13)')
+				if self.finalstate == "ElEmb":
+					add_fragment_to_end.append('process.externalLHEProducer.particleToEmbed = cms.int32(11)')
 			if file_to_copy == 'merging.py':
 				if "Run201" in self.inputfolder:
 					add_fragment_to_end.append('from TauAnalysis.MCEmbeddingTools.customisers import customiseKeepPrunedGenParticles')
@@ -131,4 +136,8 @@ class finale_state():
 				generator_frag_map["TauTau"] = "process.generator.HepMCFilter.filterParameters.HadHadCut = cms.string('Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2')"
 				generator_frag_map["TauTau"]+="\n"
 				generator_frag_map["TauTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('HadHad')"
+			elif this_finalstate=="MuEmb":
+				generator_frag_map["MuEmb"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('MuMu')"
+			elif this_finalstate=="ElEmb":
+				generator_frag_map["ElEmb"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElEl')"
 		return generator_frag_map
