@@ -9,9 +9,9 @@ export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-scram project CMSSW_9_2_3_patch2
+scram project CMSSW_9_4_2
 
-cd CMSSW_9_2_3_patch2/src
+cd CMSSW_9_4_2/src
 
 cmsenv
 
@@ -19,7 +19,7 @@ git cms-init
 
 git cms-addpkg TauAnalysis/MCEmbeddingTools
 
-git cms-merge-topic perahrens:embedding_cmssw92x
+git cms-merge-topic perahrens:embeddingReRecoElId_cmssw94x
 
 scramv1 b -j12
 
