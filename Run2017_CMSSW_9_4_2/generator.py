@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root --conditions 94X_mc2017_realistic_v10 --era Run2_2017 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:2e34v40,RAW2DIGI,RECO --datatier RAWRECO,AODSIM --customise TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator,TauAnalysis/MCEmbeddingTools/customisers.customisoptions --beamspot Realistic50ns13TeVCollision --no_exec -n -1 --python_filename generator.py --geometry DB:Extended
+# with command line options: TauAnalysis/MCEmbeddingTools/python/EmbeddingPythia8Hadronizer_cfi.py --filein file:lhe_and_cleaned.root --fileout simulated_and_cleaned.root --conditions 94X_mc2017_realistic_v10 --era Run2_2017 --eventcontent RAWRECO,AODSIM --step GEN,SIM,DIGI,L1,DIGI2RAW,HLT:2e34v40,RAW2DIGI,RECO --datatier RAWRECO,AODSIM --customise TauAnalysis/MCEmbeddingTools/customisers.customiseGenerator_Reselect,TauAnalysis/MCEmbeddingTools/customisers.customisoptions --beamspot Realistic50ns13TeVCollision --no_exec -n -1 --python_filename generator.py --geometry DB:Extended
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -186,10 +186,10 @@ for path in process.paths:
 # customisation of the process.
 
 # Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customiseGenerator,customisoptions 
+from TauAnalysis.MCEmbeddingTools.customisers import customiseGenerator_Reselect,customisoptions 
 
-#call to customisation function customiseGenerator imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseGenerator(process)
+#call to customisation function customiseGenerator_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseGenerator_Reselect(process)
 
 #call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)

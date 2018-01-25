@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: LHEprodandCLEAN --filein file:RAWskimmed.root --fileout file:lhe_and_cleaned.root --runUnscheduled --data --era Run2_2017 --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning --no_exec -n -1 --python_filename lheprodandcleaning.py --geometry DB:Extended
+# with command line options: LHEprodandCLEAN --filein file:RAWskimmed.root --fileout file:lhe_and_cleaned.root --runUnscheduled --data --era Run2_2017 --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --step RAW2DIGI,RECO,PAT --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseLHEandCleaning_Reselect --no_exec -n -1 --python_filename lheprodandcleaning.py --geometry DB:Extended
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -175,13 +175,13 @@ from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2017
 process = customisePostEra_Run2_2017(process)
 
 # Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseLHEandCleaning 
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseLHEandCleaning_Reselect 
 
 #call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseLHEandCleaning imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseLHEandCleaning(process)
+#call to customisation function customiseLHEandCleaning_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseLHEandCleaning_Reselect(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)

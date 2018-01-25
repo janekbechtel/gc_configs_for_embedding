@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled --data --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --era Run2_2017 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting --filein file:test.root --fileout RAWskimmed.root -n 60 --no_exec --python_filename=selection.py
+# with command line options: RECO -s RAW2DIGI,L1Reco,RECO,PAT --runUnscheduled --data --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --era Run2_2017 --eventcontent RAWRECO,MINIAOD --datatier RAWRECO,MINIAOD --customise Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customisoptions,TauAnalysis/MCEmbeddingTools/customisers.customiseSelecting_Reselect --filein file:test.root --fileout RAWskimmed.root -n 60 --no_exec --python_filename=selection.py
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -177,13 +177,13 @@ from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2017
 process = customisePostEra_Run2_2017(process)
 
 # Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseSelecting 
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseSelecting_Reselect 
 
 #call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseSelecting imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseSelecting(process)
+#call to customisation function customiseSelecting_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseSelecting_Reselect(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)
