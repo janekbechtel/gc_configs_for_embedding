@@ -2,7 +2,7 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: PAT -s PAT --filein file:simulated_and_cleaned.root --fileout file:merged.root --era Run2_2017 --runUnscheduled --data --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --eventcontent MINIAODSIM --datatier USER --customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions,Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customiseMerging --customise_commands process.patTrigger.processName = cms.string('SIMembedding') -n -1 --no_exec --python_filename=merging.py
+# with command line options: PAT -s PAT --filein file:simulated_and_cleaned.root --fileout file:merged.root --era Run2_2017 --runUnscheduled --data --scenario pp --conditions 94X_dataRun2_ReReco17_forValidation --eventcontent MINIAODSIM --datatier USER --customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions,Configuration/DataProcessing/RecoTLR.customisePostEra_Run2_2017,TauAnalysis/MCEmbeddingTools/customisers.customiseMerging_Reselect --customise_commands process.patTrigger.processName = cms.string('SIMembedding') -n -1 --no_exec --python_filename=merging.py
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -154,13 +154,13 @@ associatePatAlgosToolsTask(process)
 # customisation of the process.
 
 # Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseMerging 
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseMerging_Reselect 
 
 #call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
 
-#call to customisation function customiseMerging imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseMerging(process)
+#call to customisation function customiseMerging_Reselect imported from TauAnalysis.MCEmbeddingTools.customisers
+process = customiseMerging_Reselect(process)
 
 # Automatic addition of the customisation function from Configuration.DataProcessing.RecoTLR
 from Configuration.DataProcessing.RecoTLR import customisePostEra_Run2_2017 
