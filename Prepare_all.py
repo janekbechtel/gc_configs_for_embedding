@@ -1,7 +1,7 @@
 import os,stat
 
 class finale_state():
-	def __init__(self, finalstate, identifier="", generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G','Run2016H'], add_dbs=None, inputfolder = "Run2016_CMSSW_8_0_26",generator_frag_map=None):
+	def __init__(self, finalstate, identifier="", generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G','Run2016H'], add_dbs=None, inputfolder = "Run2016_CMSSW_8_0_26",generator_frag_map=None, reselect=False):
 		self.finalstate=finalstate
 		self.identifier=identifier
 		self.name = finalstate+"_"+identifier
@@ -9,15 +9,16 @@ class finale_state():
 		self.generator_frag_map = generator_frag_map
 		self.inputfolder = inputfolder
 		self.cmsRun_order =  ['preselection.py','selection.py','lheprodandcleaning.py','generator.py','merging.py'] ## will be overwitten by copy_pyconfigs (checks is exsist in input folder)
+		self.reselect = reselect
 		if not os.path.exists(self.name):
 			os.mkdir(self.name)
 		if self.generator_frag_map is None:
 			self.generator_frag_map=self.make_generator_frag_map(this_finalstate=self.finalstate)
 			
-		self.copy_pyconfigs(generator_frag=self.generator_frag_map[self.finalstate])
+		self.copy_pyconfigs(generator_frag=self.generator_frag_map[self.finalstate],reselect=self.reselect)
 		self.copy_gcconfigs(runs=runs,add_dbs=add_dbs)
 		self.write_while()
-	def copy_pyconfigs(self, generator_frag=""):
+	def copy_pyconfigs(self, generator_frag="", reselect=False):
 		is_first = True ## can be late used to init the first config with customize_for_gc and the later with the dummy stings 
 		self.cmsRun_order = []
 		for file_to_copy in ['preselection.py','selection.py','lheprodandcleaning.py','generator.py','merging.py']:
@@ -42,7 +43,10 @@ class finale_state():
 			if file_to_copy == 'merging.py':
 				if "Run201" in self.inputfolder:
 					add_fragment_to_end.append('from TauAnalysis.MCEmbeddingTools.customisers import customiseKeepPrunedGenParticles')
-					add_fragment_to_end.append('process = customiseKeepPrunedGenParticles(process)')
+					if reselect:
+						add_fragment_to_end.append('process = customiseKeepPrunedGenParticles(process,True)')
+					else:
+						add_fragment_to_end.append('process = customiseKeepPrunedGenParticles(process)')
 			if self.copy_file(file_to_copy, add_fragment_to_end=add_fragment_to_end, skip_if_not_there=True):
 				is_first = False
 				self.cmsRun_order.append(file_to_copy)
