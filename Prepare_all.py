@@ -2,14 +2,23 @@ import os,stat
 
 class finale_state():
 	def __init__(self, finalstate, identifier="", generator_frag="", runs = ['Run2016B','Run2016C','Run2016D','Run2016E','Run2016F','Run2016G','Run2016H'], add_dbs=None, inputfolder = "Run2016_CMSSW_8_0_26",generator_frag_map=None, reselect=False):
-		self.finalstate=finalstate
+		if finalstate == 'ElEmb':
+			self.finalstate = 'ElEl'
+			self.particle_to_embed = 'ElEmbedding'
+		elif finalstate == 'MuEmb': 
+			self.finalstate = 'MuMu'
+			self.particle_to_embed = 'MuEmbedding'
+		else:
+			self.finalstate = finalstate
+			self.particle_to_embed = 'TauEmbedding'
 		self.identifier=identifier
-		self.name = finalstate+"_"+identifier
+		self.name = self.finalstate+"_"+identifier
 		self.gc_cfgs = []
 		self.generator_frag_map = generator_frag_map
 		self.inputfolder = inputfolder
 		self.cmsRun_order =  ['preselection.py','selection.py','lheprodandcleaning.py','generator.py','merging.py'] ## will be overwitten by copy_pyconfigs (checks is exsist in input folder)
 		self.reselect = reselect
+
 		if not os.path.exists(self.name):
 			os.mkdir(self.name)
 		if self.generator_frag_map is None:
@@ -36,9 +45,9 @@ class finale_state():
 				if file_to_copy == 'generator.py':
 					add_fragment_to_end.append(generator_frag)
 			if file_to_copy == 'lheprodandcleaning.py':
-				if self.finalstate == "MuEmb":
+				if self.particle_to_embed == "MuEmbedding":
 					add_fragment_to_end.append('process.externalLHEProducer.particleToEmbed = cms.int32(13)')
-				if self.finalstate == "ElEmb":
+				if self.particle_to_embed == "ElEmbedding":
 					add_fragment_to_end.append('process.externalLHEProducer.particleToEmbed = cms.int32(11)')
 			if file_to_copy == 'merging.py':
 				if "Run201" in self.inputfolder:
@@ -100,13 +109,13 @@ class finale_state():
 			out_file = open(self.name+'/DAS.conf','w')
 		out_file.write('[global]\n')
 		out_file.write('include=grid_control_fullembedding_data_base.conf\n')
-		out_file.write('workdir = /portal/ekpbms2/home/${USER}/embedding/gc_workdir/TauEmbedding_'+out_file.name.split('.')[0]+'\n')
+		out_file.write('workdir = /portal/ekpbms2/home/${USER}/embedding/gc_workdir/'+self.particle_to_embed+'_'+out_file.name.split('.')[0]+'\n')
 		out_file.write('[CMSSW]\n')
 		if add_run:
-			out_file.write('dataset = TauEmbedding_'+self.name+'_'+add_run+' :  list:'+add_run+'.dbs\n')
+			out_file.write('dataset = '+self.particle_to_embed+'_'+self.name+'_'+add_run+' :  list:'+add_run+'.dbs\n')
 		if add_dbs:
 			for akt_name in add_dbs:
-				out_file.write('dataset = TauEmbedding_'+self.name+'_'+akt_name+' :  dbs:'+add_dbs[akt_name]+'\n')
+				out_file.write('dataset = '+self.particle_to_embed+'_'+self.name+'_'+akt_name+' :  dbs:'+add_dbs[akt_name]+'\n')
 		out_file.close()
 		self.gc_cfgs.append(out_file.name) ## save the 
 		
@@ -146,8 +155,8 @@ class finale_state():
 				generator_frag_map["TauTau"] = "process.generator.HepMCFilter.filterParameters.HadHadCut = cms.string('Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2')"
 				generator_frag_map["TauTau"]+="\n"
 				generator_frag_map["TauTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('HadHad')"
-			elif this_finalstate=="MuEmb":
-				generator_frag_map["MuEmb"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('MuMu')"
-			elif this_finalstate=="ElEmb":
-				generator_frag_map["ElEmb"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElEl')"
+			elif this_finalstate=="MuMu":
+				generator_frag_map["MuMu"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('MuMu')"
+			elif this_finalstate=="ElEl":
+				generator_frag_map["ElEl"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElEl')"
 		return generator_frag_map
