@@ -60,9 +60,15 @@ class finale_state():
 		rp_base_cfg['__CMSRUN_ORDER__'] = cmsRun_order_str
 		se_path_str = 'se path = srm://dcache-se-cms.desy.de:8443/srm/managerv2?SFN=/pnfs/desy.de/cms/tier2/store/user/'+os.environ["USER"]+'/gc_storage'
 		rp_base_cfg['__SE_PATH__']=se_path_str
-		se_output_pattern_str= 'se output pattern = '+self.finalstate+'_'+self.identifier+'_freiburg/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
-		rp_base_cfg['__SE_OUTPUT_PATTERN__']=se_output_pattern_str
-		self.copy_file('grid_control_fullembedding_data_base.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
+		se_output_pattern_str_freiburg= 'se output pattern = '+self.finalstate+'_'+self.identifier+'_freiburg/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
+		se_output_pattern_str_desy= 'se output pattern = '+self.finalstate+'_'+self.identifier+'_desy/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
+		se_output_pattern_str_gridka= 'se output pattern = '+self.finalstate+'_'+self.identifier+'_gridka/@NICK@/@FOLDER@/@XBASE@_@GC_JOB_ID@.@XEXT@'
+		rp_base_cfg['__SE_OUTPUT_PATTERN_FREIBURG__']=se_output_pattern_str_freiburg
+		rp_base_cfg['__SE_OUTPUT_PATTERN_DESY__']=se_output_pattern_str_desy
+		rp_base_cfg['__SE_OUTPUT_PATTERN_GRIDKA__']=se_output_pattern_str_gridka
+		self.copy_file('grid_control_fullembedding_data_base_freiburg.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
+		self.copy_file('grid_control_fullembedding_data_base_desy.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
+		self.copy_file('grid_control_fullembedding_data_base_gridka.conf', copy_from_folder='./' ,replace_dict=rp_base_cfg)
 		
 		
 	def copy_file(self, in_file_name, copy_from_folder = None ,add_fragment_to_end=[], skip_if_not_there=False, overwrite=False, replace_dict={}):
