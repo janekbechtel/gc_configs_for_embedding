@@ -29,4 +29,4 @@ done
 scramv1 b -j12
 
 git clone https://github.com/janekbechtel/grid-control
-git clone https://github.com/pahrens/gc_configs_for_embedding.git
+git clone https://github.com/perahrens/gc_configs_for_embedding.git
