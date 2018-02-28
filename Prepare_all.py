@@ -42,7 +42,7 @@ class finale_state():
 				add_fragment_to_end.append('from IOMC.RandomEngine.RandomServiceHelper import RandomNumberServiceHelper')
 				add_fragment_to_end.append('randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)')
 				add_fragment_to_end.append('randSvc.populate()')
-				add_fragment_to_end.append('print("Generator random seed: %s" % process.RandomNumberGeneratorService.generator.initialSeed')
+				add_fragment_to_end.append('print("Generator random seed: %s" % process.RandomNumberGeneratorService.generator.initialSeed)')
 
 				if file_to_copy == 'generator.py':
 					add_fragment_to_end.append(generator_frag)
