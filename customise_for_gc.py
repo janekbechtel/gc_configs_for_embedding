@@ -35,6 +35,7 @@ def customise_for_gc(process):
 	if hasattr(process, 'RandomNumberGeneratorService'):
 		randSvc = RandomNumberServiceHelper(process.RandomNumberGeneratorService)
 		randSvc.populate()
+		print('Generator random seed: %s' % process.RandomNumberGeneratorService.generator.initialSeed)
 
 	process.AdaptorConfig = cms.Service('AdaptorConfig',
 		enable = cms.untracked.bool(True),
