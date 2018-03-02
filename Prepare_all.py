@@ -159,6 +159,10 @@ class finale_state():
 				generator_frag_map["TauTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('HadHad')"
 			elif this_finalstate=="MuMu":
 				generator_frag_map["MuMu"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('MuMu')"
+				if self.particle_to_embed == "MuEmbedding":
+					generator_frag_map["MuMu"] +='\nprocess.generator.nAttempts = cms.uint32(1)'
 			elif this_finalstate=="ElEl":
 				generator_frag_map["ElEl"]="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElEl')"
+				if self.particle_to_embed == "ElEmbedding":
+					generator_frag_map["ElEl"] +='\nprocess.generator.nAttempts = cms.uint32(1)'
 		return generator_frag_map
