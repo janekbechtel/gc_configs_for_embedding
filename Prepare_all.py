@@ -146,15 +146,15 @@ class finale_state():
 				generator_frag_map["MuTau"]+="\n"
 				generator_frag_map["MuTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('MuHad')"
 			elif this_finalstate=="ElTau":
-				generator_frag_map["ElTau"] = "process.generator.HepMCFilter.filterParameters.ElHadCut = cms.string('El.Pt > 23 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4')"
+				generator_frag_map["ElTau"] = "process.generator.HepMCFilter.filterParameters.ElHadCut = cms.string('El.Pt > 22 && Had.Pt > 18 && El.Eta < 2.2 && Had.Eta < 2.4')"
 				generator_frag_map["ElTau"]+="\n"
 				generator_frag_map["ElTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElHad')"
 			elif this_finalstate=="ElMu":
-				generator_frag_map["ElMu"] = "process.generator.HepMCFilter.filterParameters.ElMuCut = cms.string('(El.Pt > 16 && Mu.Pt > 8) || (El.Pt > 11 && Mu.Pt > 16)')"
+				generator_frag_map["ElMu"] = "process.generator.HepMCFilter.filterParameters.ElMuCut = cms.string('(El.Pt > 21 && Mu.Pt > 10) || (El.Pt > 10 && Mu.Pt > 21)')"
 				generator_frag_map["ElMu"]+="\n"
 				generator_frag_map["ElMu"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('ElMu')"
 			elif this_finalstate=="TauTau":
-				generator_frag_map["TauTau"] = "process.generator.HepMCFilter.filterParameters.HadHadCut = cms.string('Had1.Pt > 38 && Had2.Pt > 38 && Had1.Eta < 2.2 && Had2.Eta < 2.2')"
+				generator_frag_map["TauTau"] = "process.generator.HepMCFilter.filterParameters.HadHadCut = cms.string('Had1.Pt > 33 && Had2.Pt > 33 && Had1.Eta < 2.2 && Had2.Eta < 2.2')"
 				generator_frag_map["TauTau"]+="\n"
 				generator_frag_map["TauTau"]+="process.generator.HepMCFilter.filterParameters.Final_States=cms.vstring('HadHad')"
 			elif this_finalstate=="MuMu":
