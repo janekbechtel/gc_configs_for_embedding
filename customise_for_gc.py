@@ -13,10 +13,16 @@ def customise_for_gc(process):
 	# Dataset related setup
 	try:
 		primaryFiles = [__FILE_NAMES__]
-		process.source = cms.Source('PoolSource',
-			skipEvents = cms.untracked.uint32(__SKIP_EVENTS__),
-			fileNames = cms.untracked.vstring(primaryFiles)
-		)
+		if not hasattr(process,"source"):
+			print "creating input source for grid-control"
+			process.source = cms.Source('PoolSource',
+				skipEvents = cms.untracked.uint32(__SKIP_EVENTS__),
+				fileNames = cms.untracked.vstring(primaryFiles)
+			)
+		else:
+			print "input source already exists, adapting it for grid-control"
+			process.source.skipEvents = cms.untracked.uint32(__SKIP_EVENTS__)
+			process.source.fileNames = cms.untracked.vstring(primaryFiles)
 		try:
 			secondaryFiles = [__FILE_NAMES2__]
 			process.source.secondaryFileNames = cms.untracked.vstring(secondaryFiles)
