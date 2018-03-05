@@ -5,8 +5,8 @@ export VO_CMS_SW_DIR=/cvmfs/cms.cern.ch
 
 source $VO_CMS_SW_DIR/cmsset_default.sh
 
-scram project CMSSW_9_4_2
-cd CMSSW_9_4_2/src
+scram project CMSSW_9_4_4
+cd CMSSW_9_4_4/src
 cmsenv
 
 git cms-init
