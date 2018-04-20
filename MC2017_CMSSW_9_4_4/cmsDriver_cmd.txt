@@ -14,8 +14,7 @@ cmsDriver.py step0p5 \
 --eventcontent RAWSIM --datatier GEN-SIM-RAW \
 --conditions 94X_upgrade2018_realistic_v8  --era Run2_2017 \
 --step NONE --runUnscheduled \
---customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions,\
-TauAnalysis/MCEmbeddingTools/customisers.customiseFilterZToMuMu \
+--customise TauAnalysis/MCEmbeddingTools/customisers.customisoptions\
 --fileout file:PreRAWskimmed.root -n 100  --python_filename=preselection.py \
 --geometry DB:Extended  --no_exec
 

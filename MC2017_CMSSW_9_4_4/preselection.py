@@ -68,13 +68,10 @@ associatePatAlgosToolsTask(process)
 # customisation of the process.
 
 # Automatic addition of the customisation function from TauAnalysis.MCEmbeddingTools.customisers
-from TauAnalysis.MCEmbeddingTools.customisers import customisoptions,customiseFilterZToMuMu 
+from TauAnalysis.MCEmbeddingTools.customisers import customisoptions
 
 #call to customisation function customisoptions imported from TauAnalysis.MCEmbeddingTools.customisers
 process = customisoptions(process)
-
-#call to customisation function customiseFilterZToMuMu imported from TauAnalysis.MCEmbeddingTools.customisers
-process = customiseFilterZToMuMu(process)
 
 # End of customisation functions
 #do not add changes to your config after this point (unless you know what you are doing)
